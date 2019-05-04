@@ -8,8 +8,8 @@
 
 import Foundation
 
-struct PagedMovieResponse: Decodable {
-    let results: [Movie]
+struct PagedMediaResponse: Decodable {
+    let results: [ListMedia]
     let dates: [String: String]?
     let totalPages: Int
     let totalResults: Int

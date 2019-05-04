@@ -8,18 +8,21 @@
 
 import UIKit
 
-class MovieCell: UITableViewCell {
+class MediaCell: UITableViewCell {
 
-    static let reusableIdentifier = "MovieCell"
+    static let reusableIdentifier = "MediaCell"
     
-    @IBOutlet weak var movieImage: UIImageView!
+    @IBOutlet weak var mediaImage: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var scoreLabel: UILabel!
     @IBOutlet weak var overviewLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
         // Initialization code
+        mediaImage.layer.masksToBounds = true;
+        mediaImage.layer.cornerRadius = 10;
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -28,10 +31,10 @@ class MovieCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configure(title: String, score: String, overview: String) {
+    func configure(title: String, score: Double, overview: String) {
         titleLabel.text = title
-        scoreLabel.text = score
-        overviewLabel.text = overview
+        scoreLabel.text = score > 0 ? String(score) : "No score available"
+        overviewLabel.text = !overview.isEmpty ? overview : "No description available"
     }
     
 }

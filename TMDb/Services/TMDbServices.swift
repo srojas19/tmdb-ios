@@ -32,54 +32,35 @@ class TMDbServices {
         session = URLSession.shared
     }
 
-    
-    func fetchMovies(ofCategory category: TMDbCategory, page: Int,
-                         completion: @escaping (Result<PagedMovieResponse, DataResponseError>) -> Void) {
-        // 1
+
+    func fetch(mediaType: TMDbMediaType, category: TMDbCategory, page: Int,
+                     completion: @escaping (Result<PagedMediaResponse, DataResponseError>) -> Void) {
         let urlRequest: URLRequest;
         switch category {
         case .popular:
-            urlRequest = URLRequest(url: baseURL.appendingPathComponent("movie/popular"))
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/popular"))
         case .topRated:
-            urlRequest = URLRequest(url: baseURL.appendingPathComponent("movie/top_rated"))
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/top_rated"))
         case .upcoming:
-            urlRequest = URLRequest(url: baseURL.appendingPathComponent("movie/upcoming"))
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/upcoming"))
         }
-//        let urlRequest = URLRequest(url: url)
-        // 2
+        
         let parameters = ["page": "\(page)", "api_key": "\(apiKey)"]
-        // 3
         let encodedURLRequest = urlRequest.encode(with: parameters)
         
         session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
-            // 4
             guard let response = response as? HTTPURLResponse,
                 (200...299).contains(response.statusCode),
                 let data = data else {
                     completion(.failure(.network))
                     return
             }
-//            do {
-//            guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
-//                throw JSONError.ConversionFailed
-//            }
-//                print(json)
-//            }
-//            catch let error as JSONError {
-//                print(error.rawValue)
-//            }
-//            catch let error as NSError {
-//                print(error.debugDescription)
-//            }
-//            
-
-            // 5
-            guard let decodedResponse = try? JSONDecoder().decode(PagedMovieResponse.self, from: data) else {
+            
+            guard let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: data) else {
                 completion(.failure(.decoding))
                 return
             }
             
-            // 6
             completion(.success(decodedResponse))
         }).resume()
     }

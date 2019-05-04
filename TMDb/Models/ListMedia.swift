@@ -8,21 +8,29 @@
 
 import Foundation
 
-struct Movie: Decodable {
+struct ListMedia: Decodable {
+    
     let posterPath: String?
-    let adult: Bool
     let overview: String
-    let releaseDate: String
     let genreIds: [Int]
     let id: Int
-    let originalTitle: String
-    let originalLanguage: String
     let title: String
     let backdropPath: String?
     let popularity: Double
     let voteCount: Int
     let video: Bool
     let voteAverage: Double
+
+    let adult: Bool?
+    let releaseDate: String?
+    let originalTitle: String?
+    let originalLanguage: String?
+    
+    let firstAirDate: String?
+    let originCountry: String?
+    let name: String?
+    let originalName: String?
+
     
     enum CodingKeys: String, CodingKey {
         case posterPath = "poster_path"
@@ -39,6 +47,11 @@ struct Movie: Decodable {
         case voteCount = "vote_count"
         case video = "video"
         case voteAverage = "vote_average"
+        
+        case firstAirDate = "first_air_date"
+        case originCountry = "origin_country"
+        case name = "name"
+        case originalName = "original_name"
     }
 
 }

@@ -8,6 +8,6 @@
 
 import Foundation
 
-enum TMDbMediaType {
-    case movies, series
+enum TMDbMediaType: String {
+    case movie = "movie", series = "tv"
 }
