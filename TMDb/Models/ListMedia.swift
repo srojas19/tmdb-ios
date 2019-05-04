@@ -10,26 +10,27 @@ import Foundation
 
 struct ListMedia: Decodable {
     
-    let posterPath: String?
-    let overview: String
-    let genreIds: [Int]
-    let id: Int
-    let title: String
-    let backdropPath: String?
-    let popularity: Double
-    let voteCount: Int
-    let video: Bool
-    let voteAverage: Double
-
+    let posterPath: String? //
+    let overview: String //
+    let genreIds: [Int] //
+    let id: Int //
+    let backdropPath: String? //
+    let popularity: Double //
+    let voteCount: Int //
+    let voteAverage: Double //
+    let originalLanguage: String? //
+    
+    let title: String?
+    let video: Bool?
     let adult: Bool?
     let releaseDate: String?
     let originalTitle: String?
-    let originalLanguage: String?
+
     
-    let firstAirDate: String?
-    let originCountry: String?
-    let name: String?
-    let originalName: String?
+    let firstAirDate: String? //
+    let originCountry: [String]? //
+    let name: String? //
+    let originalName: String? //
 
     
     enum CodingKeys: String, CodingKey {

@@ -9,5 +9,5 @@
 import Foundation
 
 enum TMDbMediaType: String {
-    case movie = "movie", series = "tv"
+    case movie = "movie", tvShow = "tv"
 }

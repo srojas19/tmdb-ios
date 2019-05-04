@@ -1,5 +1,5 @@
 //
-//  MediaViewController.swift
+//  MediaTableViewController.swift
 //  TMDb
 //
 //  Created by Santiago Rojas on 5/3/19.
@@ -8,13 +8,15 @@
 
 import UIKit
 
-class MediaViewController: UIViewController {
+class MediaTableViewController: UIViewController {
+    
     
     @IBOutlet weak var categoriesSegmentedControl: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var toolbar: UIToolbar!
     
-    let mediaType = TMDbMediaType.movie
+    
+    var mediaType = TMDbMediaType.movie
     var category = TMDbCategory.popular
     
     var isFetchInProgress = false;
@@ -124,13 +126,13 @@ class MediaViewController: UIViewController {
     
 }
 
-extension MediaViewController: UIToolbarDelegate {
+extension MediaTableViewController: UIToolbarDelegate {
     func position(for bar: UIBarPositioning) -> UIBarPosition {
         return UIBarPosition.topAttached
     }
 }
 
-extension MediaViewController: UITableViewDataSource, UITableViewDelegate, UITableViewDataSourcePrefetching {
+extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, UITableViewDataSourcePrefetching {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return totalCount
@@ -140,9 +142,9 @@ extension MediaViewController: UITableViewDataSource, UITableViewDelegate, UITab
         let cell = tableView.dequeueReusableCell(withIdentifier: MediaCell.reusableIdentifier) as! MediaCell
         let page = (indexPath.row / 20) + 1
         let item = indexPath.row % 20
-        if let movie = media[page]?[item] {
-            cell.configure(title: movie.title, score: movie.voteAverage, overview: movie.overview)
-            cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")", placeholder: nil)
+        if let media = media[page]?[item] {
+            cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
+            cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")", placeholder: nil)
         } else {
             cell.configure(title: " ", score: 0, overview: " ")
             

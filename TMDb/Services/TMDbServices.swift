@@ -36,13 +36,15 @@ class TMDbServices {
     func fetch(mediaType: TMDbMediaType, category: TMDbCategory, page: Int,
                      completion: @escaping (Result<PagedMediaResponse, DataResponseError>) -> Void) {
         let urlRequest: URLRequest;
-        switch category {
-        case .popular:
+        switch (mediaType, category) {
+        case (_, .popular):
             urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/popular"))
-        case .topRated:
+        case (_, .topRated):
             urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/top_rated"))
-        case .upcoming:
+        case (.movie, .upcoming):
             urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/upcoming"))
+        case (.tvShow, .upcoming):
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/airing_today"))
         }
         
         let parameters = ["page": "\(page)", "api_key": "\(apiKey)"]
@@ -55,6 +57,16 @@ class TMDbServices {
                     completion(.failure(.network))
                     return
             }
+            
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary
+                    else { throw JSONError.ConversionFailed }
+                print(json)
+            }
+            catch let error as JSONError { print(error.rawValue) }
+            catch let error as NSError { print(error.debugDescription) }
+    
+            
             
             guard let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: data) else {
                 completion(.failure(.decoding))
