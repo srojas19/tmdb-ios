@@ -1,0 +1,22 @@
+/* 
+  Localizable.strings
+  TMDb
+
+  Created by Santiago Rojas on 5/6/19.
+  Copyright © 2019 Santiago Rojas. All rights reserved.
+*/
+
+// DataResponseError
+"Warning" = "Precaución";
+"An error occurred while fetching data" = "Ocurrió un error tratando de cargar la información";
+"An error occurred while decoding data" = "Ocurrió un error tratando de leer la información";
+
+// MediaDetailViewController
+"Votes" = "Votos";
+"more" = "más";
+"less" = "menos";
+"No data" = "Sin datos";
+
+// MediaCell
+"No score available" = "Sin puntaje";
+"No description available" = "Sin descripción disponible.";

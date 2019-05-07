@@ -9,7 +9,7 @@
 import Foundation
 
 struct PagedMediaResponse: Decodable {
-    let results: [ListMedia]
+    let results: [MediaListResult]
     let dates: [String: String]?
     let totalPages: Int
     let totalResults: Int

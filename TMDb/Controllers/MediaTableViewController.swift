@@ -10,17 +10,15 @@ import UIKit
 
 class MediaTableViewController: UIViewController {
     
-    
-    @IBOutlet weak var categoriesSegmentedControl: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var categoriesSegmentedControl: UISegmentedControl!
     
-    
-    var mediaType = TMDbMediaType.movie
+    var mediaType: TMDbMediaType!
     var category = TMDbCategory.popular
     
     var isFetchInProgress = false;
-    var media = [Int: [ListMedia]]()
+    var media = [Int: [MediaListResult]]()
     var totalPages = 0
     var totalCount = 0
     let pageSize = 20
@@ -35,8 +33,8 @@ class MediaTableViewController: UIViewController {
         tableView.dataSource = self
         tableView.prefetchDataSource = self
         tableView.tableFooterView = UIView()
-        tableView.contentInset.top += CGFloat(44)
-        tableView.scrollIndicatorInsets.top += CGFloat(44)
+        tableView.contentInset.top += toolbar.bounds.height
+        tableView.scrollIndicatorInsets.top += toolbar.bounds.height
         toolbar.delegate = self
         
         fetch(page: 1)
@@ -114,15 +112,30 @@ class MediaTableViewController: UIViewController {
     }
     
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
+    
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+        super.prepare(for: segue, sender: sender)
+        switch segue.identifier ?? "" {
+        case "Show Detail":
+            guard let mediaDetailViewController = segue.destination as? MediaDetailViewController,
+                let indexPath = sender as? IndexPath else { return }
+                
+                let page = (indexPath.row / 20) + 1
+                let item = indexPath.row % 20
+                mediaDetailViewController.mediaData = media[page]?[item]
+                mediaDetailViewController.mediaType = mediaType
+            
+        default:
+            fatalError("Unidentified Segue")
+        }
+        
+    }
+    
     
 }
 
@@ -144,9 +157,9 @@ extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, 
         let item = indexPath.row % 20
         if let media = media[page]?[item] {
             cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
-            cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")", placeholder: nil)
+            cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")", placeholder: UIImage(named: "Media Placeholder"))
         } else {
-            cell.configure(title: " ", score: 0, overview: " ")
+            cell.loading()
             
         }
         
@@ -161,5 +174,9 @@ extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, 
         }) {
             fetch(page: (indexPaths[0].row / 20) + 1)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "Show Detail", sender: indexPath)
     }
 }

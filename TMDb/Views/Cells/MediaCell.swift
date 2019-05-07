@@ -22,7 +22,7 @@ class MediaCell: UITableViewCell {
         
         // Initialization code
         mediaImage.layer.masksToBounds = true;
-        mediaImage.layer.cornerRadius = 10;
+        mediaImage.layer.cornerRadius = 5;
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -33,8 +33,14 @@ class MediaCell: UITableViewCell {
     
     func configure(title: String, score: Double, overview: String) {
         titleLabel.text = title
-        scoreLabel.text = score > 0 ? String(score) : "No score available"
-        overviewLabel.text = !overview.isEmpty ? overview : "No description available"
+        scoreLabel.text = score > 0 ? String(score) : "No score available".localizedString
+        overviewLabel.text = !overview.isEmpty ? overview : "No description available".localizedString
+    }
+    
+    func loading() {
+        titleLabel.text = ""
+        scoreLabel.text = ""
+        overviewLabel.text = ""
     }
     
 }

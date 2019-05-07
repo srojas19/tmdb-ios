@@ -47,7 +47,36 @@ class TMDbServices {
             urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/airing_today"))
         }
         
-        let parameters = ["page": "\(page)", "api_key": "\(apiKey)"]
+        let parameters = ["page": "\(page)", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
+        let encodedURLRequest = urlRequest.encode(with: parameters)
+        
+        session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
+            guard let response = response as? HTTPURLResponse,
+                (200...299).contains(response.statusCode),
+                let data = data else {
+                    completion(.failure(.network))
+                    return
+            }
+            
+//            do {
+//                let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary
+//                print(json)
+//            }
+//            catch { print(error) }
+            
+            guard let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: data) else {
+                completion(.failure(.decoding))
+                return
+            }
+            
+            completion(.success(decodedResponse))
+        }).resume()
+    }
+    
+    func getMediaDetail(mediaType: TMDbMediaType, id: Int, completion: @escaping (Result<Media, DataResponseError>) -> Void) {
+        
+        let urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/\(id)"))
+        let parameters = ["append_to_response": "videos", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
         let encodedURLRequest = urlRequest.encode(with: parameters)
         
         session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
@@ -59,27 +88,22 @@ class TMDbServices {
             }
             
             do {
-                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary
-                    else { throw JSONError.ConversionFailed }
-                print(json)
+                let decodedResponse = try JSONDecoder().decode(TVShow.self, from: data)
             }
-            catch let error as JSONError { print(error.rawValue) }
-            catch let error as NSError { print(error.debugDescription) }
-    
+            catch {
+                print("\(error)")
+            }
             
-            
-            guard let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: data) else {
+            if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: data) {
+                completion(.success(decodedResponse))
+            } else if mediaType == .tvShow, let decodedResponse = try? JSONDecoder().decode(TVShow.self, from: data) {
+                completion(.success(decodedResponse))
+            } else {
                 completion(.failure(.decoding))
-                return
             }
             
-            completion(.success(decodedResponse))
         }).resume()
+
     }
     
-}
-
-enum JSONError: String, Error {
-    case NoData = "ERROR: no data"
-    case ConversionFailed = "ERROR: conversion from JSON failed"
 }

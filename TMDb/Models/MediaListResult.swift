@@ -1,5 +1,5 @@
 //
-//  Movie.swift
+//  MediaListResult.swift
 //  TMDb
 //
 //  Created by Santiago Rojas on 5/1/19.
@@ -8,17 +8,17 @@
 
 import Foundation
 
-struct ListMedia: Decodable {
+struct MediaListResult: Decodable {
     
-    let posterPath: String? //
-    let overview: String //
-    let genreIds: [Int] //
-    let id: Int //
-    let backdropPath: String? //
-    let popularity: Double //
-    let voteCount: Int //
-    let voteAverage: Double //
-    let originalLanguage: String? //
+    let posterPath: String?
+    let overview: String
+    let genreIds: [Int]
+    let id: Int
+    let backdropPath: String?
+    let popularity: Double
+    let voteCount: Int
+    let voteAverage: Double
+    let originalLanguage: String?
     
     let title: String?
     let video: Bool?
@@ -27,10 +27,10 @@ struct ListMedia: Decodable {
     let originalTitle: String?
 
     
-    let firstAirDate: String? //
-    let originCountry: [String]? //
-    let name: String? //
-    let originalName: String? //
+    let firstAirDate: String?
+    let originCountry: [String]?
+    let name: String?
+    let originalName: String?
 
     
     enum CodingKeys: String, CodingKey {
