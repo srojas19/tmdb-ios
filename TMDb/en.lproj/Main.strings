@@ -1,0 +1,72 @@
+
+/* Class = "UILabel"; text = "Seasons"; ObjectID = "0ce-Y4-5eo"; */
+"0ce-Y4-5eo.text" = "Seasons";
+
+/* Class = "UITabBarItem"; title = "TV Shows"; ObjectID = "2AJ-bO-Zza"; */
+"2AJ-bO-Zza.title" = "TV Shows";
+
+/* Class = "UISegmentedControl"; 5ep-Mq-Jcr.segmentTitles[0] = "Popular"; ObjectID = "5ep-Mq-Jcr"; */
+"5ep-Mq-Jcr.segmentTitles[0]" = "Popular";
+
+/* Class = "UISegmentedControl"; 5ep-Mq-Jcr.segmentTitles[1] = "Top Rated"; ObjectID = "5ep-Mq-Jcr"; */
+"5ep-Mq-Jcr.segmentTitles[1]" = "Top Rated";
+
+/* Class = "UISegmentedControl"; 5ep-Mq-Jcr.segmentTitles[2] = "Upcoming"; ObjectID = "5ep-Mq-Jcr"; */
+"5ep-Mq-Jcr.segmentTitles[2]" = "Upcoming";
+
+/* Class = "UILabel"; text = "4.0"; ObjectID = "6aR-Ln-rka"; */
+"6aR-Ln-rka.text" = "4.0";
+
+/* Class = "UILabel"; text = "60"; ObjectID = "CwT-Uh-evg"; */
+"CwT-Uh-evg.text" = "60";
+
+/* Class = "UILabel"; text = "Popularity"; ObjectID = "I0L-ZH-2Rj"; */
+"I0L-ZH-2Rj.text" = "Popularity";
+
+/* Class = "UITabBarItem"; title = "Movies"; ObjectID = "IHA-qw-0RE"; */
+"IHA-qw-0RE.title" = "Movies";
+
+/* Class = "UIButton"; normalTitle = "more"; ObjectID = "IUG-aI-1UU"; */
+"IUG-aI-1UU.normalTitle" = "more";
+
+/* Class = "UINavigationItem"; title = "TV Shows"; ObjectID = "Is0-vL-Ey9"; */
+"Is0-vL-Ey9.title" = "TV Shows";
+
+/* Class = "UILabel"; text = "120 min"; ObjectID = "N6y-e3-gZn"; */
+"N6y-e3-gZn.text" = "120 min";
+
+/* Class = "UILabel"; text = "7"; ObjectID = "O6g-zl-xwY"; */
+"O6g-zl-xwY.text" = "7";
+
+/* Class = "UILabel"; text = "Date"; ObjectID = "Pg2-Pn-zJM"; */
+"Pg2-Pn-zJM.text" = "Date";
+
+/* Class = "UILabel"; text = "Duration"; ObjectID = "XfJ-dF-amo"; */
+"XfJ-dF-amo.text" = "Duration";
+
+/* Class = "UILabel"; text = "10 Reviews"; ObjectID = "ZjD-BP-haQ"; */
+"ZjD-BP-haQ.text" = "10 Reviews";
+
+/* Class = "UILabel"; text = "Episodes"; ObjectID = "aZb-7Q-dpV"; */
+"aZb-7Q-dpV.text" = "Episodes";
+
+/* Class = "UILabel"; text = "4.0 ★"; ObjectID = "bx5-hE-8Ss"; */
+"bx5-hE-8Ss.text" = "4.0 ★";
+
+/* Class = "UILabel"; text = "Genres"; ObjectID = "cZH-e5-Pks"; */
+"cZH-e5-Pks.text" = "Genres";
+
+/* Class = "UINavigationItem"; title = "Movies"; ObjectID = "dZT-wu-Q2j"; */
+"dZT-wu-Q2j.title" = "Movies";
+
+/* Class = "UILabel"; text = "Description"; ObjectID = "pG2-qk-eYS"; */
+"pG2-qk-eYS.text" = "Description";
+
+/* Class = "UILabel"; text = "Overview"; ObjectID = "rdV-nO-Mfx"; */
+"rdV-nO-Mfx.text" = "Overview";
+
+/* Class = "UILabel"; text = "Original Language"; ObjectID = "rtv-ev-tnS"; */
+"rtv-ev-tnS.text" = "Original Language";
+
+/* Class = "UILabel"; text = "Production Companies"; ObjectID = "yAf-0T-Fbj"; */
+"yAf-0T-Fbj.text" = "Production Companies";

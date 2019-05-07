@@ -106,7 +106,7 @@
 		DE970FAC227F96FA00C08E17 /* TMDBCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBCollection.swift; sourceTree = "<group>"; };
 		DE970FAE227FA57B00C08E17 /* UIImage+ImageFromURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+ImageFromURL.swift"; sourceTree = "<group>"; };
 		DE970FB422810F6000C08E17 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
-		DE970FB522810F6100C08E17 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		DEB8A0332281368C006A264A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		DEDA1A06227D42FD00AE453F /* MediaTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -475,6 +475,7 @@
 			children = (
 				DE5C57E622791072000F6453 /* Base */,
 				DE970FB422810F6000C08E17 /* es */,
+				DEB8A0332281368C006A264A /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -483,7 +484,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				DE5C57EB22791074000F6453 /* Base */,
-				DE970FB522810F6100C08E17 /* es */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
