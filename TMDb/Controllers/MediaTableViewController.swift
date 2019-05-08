@@ -68,7 +68,9 @@ class MediaTableViewController: UIViewController {
         totalPages = 0
         totalCount = 0
         fetch(page: 1)
-        tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: false)
+        if totalCount > 0 {
+            tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: false)
+        }
         
     }
     

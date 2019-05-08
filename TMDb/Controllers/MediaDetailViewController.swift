@@ -81,17 +81,17 @@ class MediaDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         navigationItem.title = mediaData.title ?? mediaData.name
         
-        fadeView.frame = view.frame
-        fadeView.backgroundColor = .white
-        fadeView.alpha = 1
-        
-        view.addSubview(fadeView)
-        view.addSubview(activityView)
-        
-        activityView.hidesWhenStopped = true
-        activityView.center = view.center
-        activityView.startAnimating()
-        
+        if media == nil {
+            fadeView.frame = view.frame
+            fadeView.backgroundColor = .white
+            fadeView.alpha = 1
+            
+            view.addSubview(fadeView)
+            view.addSubview(activityView)
+            activityView.hidesWhenStopped = true
+            activityView.center = view.center
+            activityView.startAnimating()
+        }
     }
     
     private func getDetailedData(completionHandler: @escaping () -> Void) {

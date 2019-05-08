@@ -14,6 +14,7 @@ class TMDbServices {
     
     private let apiKey: String
     private let session: URLSession
+    private let reachability = Reachability()!
     
     private lazy var baseURL: URL = {
         return URL(string: "https://api.themoviedb.org/3/")!
@@ -49,6 +50,15 @@ class TMDbServices {
         
         let parameters = ["page": "\(page)", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
         let encodedURLRequest = urlRequest.encode(with: parameters)
+        guard reachability.connection != .none else {
+            if let response = URLCache.shared.cachedResponse(for: encodedURLRequest), let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: response.data){
+                completion(.success(decodedResponse))
+            } else {
+                completion(.failure(.network))
+            }
+            return
+        }
+
         
         session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
             guard let response = response as? HTTPURLResponse,
@@ -58,13 +68,16 @@ class TMDbServices {
                     return
             }
             
-//            do {
-//                let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary
-//                print(json)
-//            }
-//            catch { print(error) }
+            /*
+            do {
+                let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary
+                print(json)
+            }
+            catch { print(error) }
+            */
             
             guard let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: data) else {
+                URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: encodedURLRequest)
                 completion(.failure(.decoding))
                 return
             }
@@ -78,7 +91,20 @@ class TMDbServices {
         let urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/\(id)"))
         let parameters = ["append_to_response": "videos", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
         let encodedURLRequest = urlRequest.encode(with: parameters)
-        
+        guard reachability.connection != .none else {
+            if let response = URLCache.shared.cachedResponse(for: encodedURLRequest) {
+                if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: response.data) {
+                    completion(.success(decodedResponse))
+                } else if mediaType == .tvShow, let decodedResponse = try? JSONDecoder().decode(TVShow.self, from: response.data) {
+                    completion(.success(decodedResponse))
+                } else {
+                    completion(.failure(.decoding))
+                }
+            } else {
+                completion(.failure(.network))
+            }
+            return
+        }
         session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
             guard let response = response as? HTTPURLResponse,
                 (200...299).contains(response.statusCode),
@@ -87,16 +113,20 @@ class TMDbServices {
                     return
             }
             
+            /*
             do {
                 let decodedResponse = try JSONDecoder().decode(TVShow.self, from: data)
             }
             catch {
                 print("\(error)")
             }
+            */
             
             if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: data) {
+                URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: encodedURLRequest)
                 completion(.success(decodedResponse))
             } else if mediaType == .tvShow, let decodedResponse = try? JSONDecoder().decode(TVShow.self, from: data) {
+                URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: encodedURLRequest)
                 completion(.success(decodedResponse))
             } else {
                 completion(.failure(.decoding))
