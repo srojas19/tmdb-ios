@@ -244,8 +244,7 @@
 				DE8C50AE227BF4D6001D502C /* UIImageView+ImageFromURL.swift */,
 				DE970FAE227FA57B00C08E17 /* UIImage+ImageFromURL.swift */,
 			);
-			name = Extensions;
-			path = Services/Extensions;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DE8C50A9227BE849001D502C /* Cells */ = {
