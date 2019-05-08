@@ -11,6 +11,10 @@
 "An error occurred while fetching data" = "Ocurrió un error tratando de cargar la información";
 "An error occurred while decoding data" = "Ocurrió un error tratando de leer la información";
 
+// MediaTableViewController
+"Filter movies" = "Filtrar películas";
+"Filter TV shows" = "Filtrar shows de TV";
+
 // MediaDetailViewController
 "Votes" = "Votos";
 "more" = "más";

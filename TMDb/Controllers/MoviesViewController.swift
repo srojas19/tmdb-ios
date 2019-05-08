@@ -18,6 +18,10 @@ class MoviesViewController: UIViewController {
     }
     
     
+    @IBAction func focusSearchBar(_ sender: Any) {
+        navigationItem.searchController?.searchBar.becomeFirstResponder()
+    }
+    
      // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -27,10 +31,10 @@ class MoviesViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         switch segue.identifier ?? "" {
         case "Media Table":
-            if let mediaTableViewController = segue.destination as? MediaTableViewController {
-                mediaTableViewController.mediaType = .movie
-            }
-
+            guard let mediaTableViewController = segue.destination as? MediaTableViewController else { fatalError("Unexpected View Controller") }
+            mediaTableViewController.mediaType = .movie
+            addChild(mediaTableViewController)
+            
         default:
             fatalError("Unidentified Segue")
         }

@@ -11,6 +11,9 @@
 "An error occurred while fetching data" = "An error occurred while fetching data";
 "An error occurred while decoding data" = "An error occurred while decoding data";
 
+// MediaTableViewController
+"Filter movies" = "Filter movies";
+"Filter TV shows" = "Filter TV shows";
 
 // MediaDetailViewController
 "Votes" = "Votes";

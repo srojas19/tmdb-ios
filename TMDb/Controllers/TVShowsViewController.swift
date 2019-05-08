@@ -14,7 +14,10 @@ class TVShowsViewController: UIViewController {
         super.viewDidLoad()
     }
     
-
+    @IBAction func focusSearchBar(_ sender: Any) {
+        navigationItem.searchController?.searchBar.becomeFirstResponder()
+    }
+    
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -24,10 +27,9 @@ class TVShowsViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         switch segue.identifier ?? "" {
         case "Media Table":
-            if let mediaTableViewController = segue.destination as? MediaTableViewController {
-                mediaTableViewController.mediaType = .tvShow
-            }
-            
+            guard let mediaTableViewController = segue.destination as? MediaTableViewController else { fatalError("Unexpected View Controller") }
+            mediaTableViewController.mediaType = .tvShow
+            addChild(mediaTableViewController)
         default:
             fatalError("Unidentified Segue")
         }

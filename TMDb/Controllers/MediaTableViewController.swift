@@ -23,6 +23,9 @@ class MediaTableViewController: UIViewController {
     var totalCount = 0
     let pageSize = 20
     
+    var searchResults = [MediaListResult]()
+    var isSearching = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,6 +40,17 @@ class MediaTableViewController: UIViewController {
         tableView.scrollIndicatorInsets.top += toolbar.bounds.height
         toolbar.delegate = self
         
+        
+        // SearchBar configuration
+        parent?.definesPresentationContext = true
+        parent?.navigationItem.searchController = UISearchController(searchResultsController: nil)
+        parent?.navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
+        parent?.navigationItem.searchController?.delegate = self
+        if let searchBar = parent?.navigationItem.searchController?.searchBar {
+            searchBar.placeholder = parent is MoviesViewController ? "Filter movies".localizedString : "Filter TV shows".localizedString
+            searchBar.delegate = self
+        }
+        
         fetch(page: 1)
     }
     
@@ -50,8 +64,9 @@ class MediaTableViewController: UIViewController {
     
     @IBAction func changeCategory(_ sender: UISegmentedControl) {
         category = TMDbCategory(rawValue: sender.selectedSegmentIndex)!
-        
         media.removeAll()
+        totalPages = 0
+        totalCount = 0
         fetch(page: 1)
         tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: false)
         
@@ -59,13 +74,8 @@ class MediaTableViewController: UIViewController {
     
     private func fetch(page: Int) {
         
-        guard media[page] == nil else {
-            return
-        }
-        
-        guard !isFetchInProgress else {
-            return
-        }
+        guard media[page] == nil else { return }
+        guard !isFetchInProgress else { return}
         
         isFetchInProgress = true
         
@@ -92,25 +102,11 @@ class MediaTableViewController: UIViewController {
                         self.totalCount = response.totalResults
                         self.totalPages = response.totalPages
                     }
-                    //                        self.tableView.reloadData()
-                    //                    } else {
-                    //                        self.tableView.reloadRows(at: self.visibleIndexPathsToReload(forPage: page) , with: .none)
-                    //                    }
                     self.tableView.reloadData()
                 }
             }
         }
     }
-    
-    func visibleIndexPathsToReload(forPage page: Int) -> [IndexPath] {
-        let startIndex = (page - 1) * 20
-        let endIndex = startIndex + 20
-        let indexPaths =  (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
-        let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
-        let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
-        return Array(indexPathsIntersection)
-    }
-    
     
     
     // MARK: - Navigation
@@ -124,11 +120,11 @@ class MediaTableViewController: UIViewController {
         case "Show Detail":
             guard let mediaDetailViewController = segue.destination as? MediaDetailViewController,
                 let indexPath = sender as? IndexPath else { return }
-                
-                let page = (indexPath.row / 20) + 1
-                let item = indexPath.row % 20
-                mediaDetailViewController.mediaData = media[page]?[item]
-                mediaDetailViewController.mediaType = mediaType
+            let page = (indexPath.row / 20) + 1
+            let item = indexPath.row % 20
+            
+            mediaDetailViewController.mediaData = isSearching ? searchResults[indexPath.row] : media[page]?[item]
+            mediaDetailViewController.mediaType = mediaType
             
         default:
             fatalError("Unidentified Segue")
@@ -148,14 +144,19 @@ extension MediaTableViewController: UIToolbarDelegate {
 extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, UITableViewDataSourcePrefetching {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return totalCount
+        if isSearching { return searchResults.count }
+        else { return totalCount }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MediaCell.reusableIdentifier) as! MediaCell
         let page = (indexPath.row / 20) + 1
         let item = indexPath.row % 20
-        if let media = media[page]?[item] {
+        if isSearching {
+            let media = searchResults[indexPath.row]
+            cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
+            cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")", placeholder: UIImage(named: "Media Placeholder"))
+        } else if let media = media[page]?[item] {
             cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
             cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")", placeholder: UIImage(named: "Media Placeholder"))
         } else {
@@ -167,16 +168,41 @@ extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, 
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        if indexPaths.contains(where: { (indexPath) -> Bool in
+        if !isSearching, indexPaths.contains(where: { (indexPath) -> Bool in
             let page = (indexPath.row / 20) + 1
             let item = indexPath.row % 20
             return self.media[page]?[item] == nil
-        }) {
-            fetch(page: (indexPaths[0].row / 20) + 1)
-        }
+        }) { fetch(page: (indexPaths[0].row / 20) + 1) }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "Show Detail", sender: indexPath)
+    }
+}
+
+extension MediaTableViewController: UISearchControllerDelegate, UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        isSearching = true
+        categoriesSegmentedControl.isEnabled = false
+        tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        isSearching = false
+        categoriesSegmentedControl.isEnabled = true
+        searchResults.removeAll(keepingCapacity: false)
+        tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let text = searchBar.text, !text.isEmpty {
+            searchResults.removeAll(keepingCapacity: true)
+            for (_, page) in media {
+                searchResults += page.filter { $0.name?.range(of: text, options: .caseInsensitive) != nil || $0.title?.range(of: text, options: .caseInsensitive) != nil}
+            }
+            tableView.reloadData()
+        }
+        
     }
 }
