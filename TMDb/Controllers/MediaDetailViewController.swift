@@ -83,7 +83,7 @@ class MediaDetailViewController: UIViewController {
         
         if media == nil {
             fadeView.frame = view.frame
-            fadeView.backgroundColor = .white
+            fadeView.backgroundColor = UIColor(named: "Background")
             fadeView.alpha = 1
             
             view.addSubview(fadeView)

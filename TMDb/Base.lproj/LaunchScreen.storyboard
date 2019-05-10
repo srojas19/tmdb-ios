@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -26,7 +27,8 @@
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.031989645212888718" green="0.10936105996370316" blue="0.14278021454811096" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="Secondary"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="RzP-D1-BhY" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="LyV-s6-eeq"/>
                             <constraint firstItem="RzP-D1-BhY" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Uh5-fP-sj7"/>
@@ -41,5 +43,8 @@
     </scenes>
     <resources>
         <image name="Logo" width="189" height="167"/>
+        <namedColor name="Secondary">
+            <color red="0.031372549019607843" green="0.10980392156862745" blue="0.14117647058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
     </resources>
 </document>
