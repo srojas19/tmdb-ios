@@ -7,10 +7,13 @@
 //
 
 import Foundation
+import RealmSwift
 
 class TMDbServices {
     
     static let shared = TMDbServices()
+    
+    private let realm = try! Realm()
     
     private let apiKey: String
     private let session: URLSession
@@ -32,8 +35,70 @@ class TMDbServices {
         
         session = URLSession.shared
     }
+    
+    func fetch(mediaType: TMDbMediaType, category: TMDbCategory, page: Int,
+               completion: @escaping (Result<PagedMediaResponse, DataResponseError>) -> Void) {
+        let urlRequest: URLRequest;
+        switch (mediaType, category) {
+        case (_, .popular):
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/popular"))
+        case (_, .topRated):
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/top_rated"))
+        case (.movie, .upcoming):
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/upcoming"))
+        case (.tvShow, .upcoming):
+            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/airing_today"))
+        }
+        
+        let parameters = ["page": "\(page)", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
+        let encodedURLRequest = urlRequest.encode(with: parameters)
+        
+        guard reachability.connection != .none else {
+            let response = realm.objects(PagedMediaResponse.self).filter("page = \(page) AND mediaType = '\(mediaType.rawValue)' AND category = \(category.rawValue)")
+            if let response = response.first {
+                completion(.success(response))
+            } else {
+                completion(.failure(.network))
+            }
+            return
+        }
+        
+        session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
+            guard let response = response as? HTTPURLResponse,
+                (200...299).contains(response.statusCode),
+                let data = data else {
+                    completion(.failure(.network))
+                    return
+            }
+            
+            guard let decodedResponse = PagedMediaResponse(JSONString: String(data: data, encoding: .utf8)!) else {
+                completion(.failure(.decoding))
+                return
+            }
+            
+            for media in decodedResponse.results {
+                print(media.title)
+                print(media.video)
+                print(Array(media.genreIds))
+            }
+            
+            decodedResponse.category = category.rawValue
+            decodedResponse.mediaType = mediaType.rawValue
+            decodedResponse.id = "\(decodedResponse.page)\(decodedResponse.mediaType)\(decodedResponse.category)"
+            DispatchQueue.main.async {
+                try! self.realm.write {
+                    self.realm.add(decodedResponse, update: true)
+                }
+                
+            }
+            completion(.success(decodedResponse))
+            
+        }).resume()
+    }
+    
+    
 
-
+/*
     func fetch(mediaType: TMDbMediaType, category: TMDbCategory, page: Int,
                      completion: @escaping (Result<PagedMediaResponse, DataResponseError>) -> Void) {
         let urlRequest: URLRequest;
@@ -85,6 +150,7 @@ class TMDbServices {
             completion(.success(decodedResponse))
         }).resume()
     }
+*/
     
     func getMediaDetail(mediaType: TMDbMediaType, id: Int, completion: @escaping (Result<Media, DataResponseError>) -> Void) {
         

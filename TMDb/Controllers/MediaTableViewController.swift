@@ -97,7 +97,7 @@ class MediaTableViewController: UIViewController {
                     
                 }
             case .success(let response):
-                self.media[page] = response.results
+                self.media[page] = Array(response.results)
                 self.isFetchInProgress = false
                 DispatchQueue.main.async {
                     if page == 1 {

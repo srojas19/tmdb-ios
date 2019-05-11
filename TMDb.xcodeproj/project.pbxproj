@@ -14,6 +14,7 @@
 		DE5C57EC22791074000F6453 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE5C57EA22791074000F6453 /* LaunchScreen.storyboard */; };
 		DE5C57F722791074000F6453 /* TMDbTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5C57F622791074000F6453 /* TMDbTests.swift */; };
 		DE5C580222791074000F6453 /* TMDbUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5C580122791074000F6453 /* TMDbUITests.swift */; };
+		DE8547C0228649FD000DE8A4 /* ObjectMapper+Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8547BF228649FD000DE8A4 /* ObjectMapper+Realm.swift */; };
 		DE8C507722791AD6001D502C /* TMDbService-info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE8C507622791AD6001D502C /* TMDbService-info.plist */; };
 		DE8C507F227940CE001D502C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE8C507E227940CE001D502C /* Assets.xcassets */; };
 		DE8C5081227943D3001D502C /* MoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C5080227943D3001D502C /* MoviesViewController.swift */; };
@@ -87,6 +88,7 @@
 		DE5C57FD22791074000F6453 /* TMDbUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TMDbUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE5C580122791074000F6453 /* TMDbUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDbUITests.swift; sourceTree = "<group>"; };
 		DE5C580322791074000F6453 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DE8547BF228649FD000DE8A4 /* ObjectMapper+Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ObjectMapper+Realm.swift"; sourceTree = "<group>"; };
 		DE8C507622791AD6001D502C /* TMDbService-info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TMDbService-info.plist"; sourceTree = "<group>"; };
 		DE8C507E227940CE001D502C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DE8C5080227943D3001D502C /* MoviesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesViewController.swift; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 		DE8C5098227A7B23001D502C /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				DE8547BF228649FD000DE8A4 /* ObjectMapper+Realm.swift */,
 				DE8C50A5227A9D19001D502C /* String+Extensions.swift */,
 				DE8C509D227A96D4001D502C /* URLRequest.swift */,
 				DE8C50AE227BF4D6001D502C /* UIImageView+ImageFromURL.swift */,
@@ -311,7 +314,6 @@
 				ABBFA4459DCBAA6A8574B46A /* Pods-TMDbUITests.debug.xcconfig */,
 				B4B2D9B2E4A0AD46FA7C3781 /* Pods-TMDbUITests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -550,6 +552,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TMDb/Pods-TMDb-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/ObjectMapperAdditions/ObjectMapperAdditions.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 			);
@@ -557,6 +561,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapperAdditions.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 			);
@@ -597,6 +603,7 @@
 				DE8C5081227943D3001D502C /* MoviesViewController.swift in Sources */,
 				DE8C5083227943DD001D502C /* TVShowsViewController.swift in Sources */,
 				DE8C5088227A1F6B001D502C /* TMDbServices.swift in Sources */,
+				DE8547C0228649FD000DE8A4 /* ObjectMapper+Realm.swift in Sources */,
 				DE8C509C227A7F40001D502C /* TMDbMediaType.swift in Sources */,
 				DE970F96227F57E300C08E17 /* Media.swift in Sources */,
 				DE970F94227F560C00C08E17 /* MediaDetailView.swift in Sources */,
