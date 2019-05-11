@@ -7,18 +7,30 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
+import ObjectMapperAdditions
 
-struct TMDBCollection: Decodable {
-    let backdropPath: String?
-    let id: Int?
-    let name: String?
-    let posterPath: String?
+@objcMembers
+class TMDBCollection: Object, Mappable {
+    dynamic var backdropPath: String? = nil
+    dynamic var id: Int = 0
+    dynamic var name: String? = nil
+    dynamic var posterPath: String? = nil
     
-    enum CodingKeys: String, CodingKey {
-        case backdropPath = "backdrop_path"
-        case id
-        case name
-        case posterPath = "poster_path"
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        backdropPath <- map["backdrop_path"]
+        id <- map["id"]
+        name <- map["name"]
+        posterPath <- map["poster_path"]
     }
 
 }

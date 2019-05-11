@@ -96,6 +96,62 @@ class TMDbServices {
         let parameters = ["append_to_response": "videos", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
         let encodedURLRequest = urlRequest.encode(with: parameters)
         guard Reachability()!.connection != .none else {
+            switch mediaType {
+            case .movie:
+                if let response = realm.object(ofType: Movie.self, forPrimaryKey: id) {
+                    completion(.success(response))
+                } else { completion(.failure(.network)) }
+            case .tvShow:
+                if let response = realm.object(ofType: TVShow.self, forPrimaryKey: id) {
+                    completion(.success(response))
+                } else { completion(.failure(.network)) }
+            }
+            return
+        }
+        session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
+            guard let response = response as? HTTPURLResponse,
+                (200...299).contains(response.statusCode),
+                let data = data else {
+                    completion(.failure(.network))
+                    return
+            }
+            
+            switch mediaType {
+            case .movie:
+                guard let decodedResponse = Movie(JSONString: String(data: data, encoding: .utf8)!) else {
+                    completion(.failure(.decoding))
+                    return
+                }
+                DispatchQueue.main.async {
+                    try! self.realm.write {
+                        self.realm.add(decodedResponse, update: true)
+                    }
+                }
+                completion(.success(decodedResponse))
+            case .tvShow:
+                guard let decodedResponse = TVShow(JSONString: String(data: data, encoding: .utf8)!) else {
+                    completion(.failure(.decoding))
+                    return
+                }
+                DispatchQueue.main.async {
+                    try! self.realm.write {
+                        self.realm.add(decodedResponse, update: true)
+                    }
+                }
+                completion(.success(decodedResponse))
+            }
+        }).resume()
+        
+    }
+
+    
+    /*
+    func getMediaDetail(mediaType: TMDbMediaType, id: Int, completion: @escaping (Result<Media, DataResponseError>) -> Void) {
+        
+        let urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/\(id)"))
+        let parameters = ["append_to_response": "videos", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
+        let encodedURLRequest = urlRequest.encode(with: parameters)
+        guard Reachability()!.connection != .none else {
             if let response = URLCache.shared.cachedResponse(for: encodedURLRequest) {
                 if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: response.data) {
                     completion(.success(decodedResponse))
@@ -139,5 +195,6 @@ class TMDbServices {
         }).resume()
         
     }
+    */
     
 }

@@ -7,33 +7,46 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
+import ObjectMapperAdditions
 
-struct Episode: Decodable {
+@objcMembers
+class Episode: Object, Mappable {
     
-    let airDate: String?
-    let episodeNumber: Int?
-    let id: Int?
-    let name: String?
-    let overview: String?
-    let productionCode: String?
-    let seasonNumber: Int?
-    let showId: Int?
-    let stillPath: String?
-    let voteAverage: Double?
-    let voteCount: Int?
+    dynamic var airDate: String? = nil
+    var episodeNumber = RealmOptional<Int>()
+    dynamic var id = 0
+    dynamic var name: String? = nil
+    dynamic var overview: String? = nil
+    dynamic var productionCode: String? = nil
+    var seasonNumber = RealmOptional<Int>()
+    var showId = RealmOptional<Int>()
+    dynamic var stillPath: String? = nil
+    var voteAverage = RealmOptional<Double>()
+    var voteCount = RealmOptional<Int>()
     
-    enum CodingKeys: String, CodingKey {
-        case airDate = "air_date"
-        case episodeNumber = "episode_number"
-        case id
-        case name
-        case overview
-        case productionCode = "production_code"
-        case seasonNumber = "season_number"
-        case showId = "show_id"
-        case stillPath = "still_path"
-        case voteAverage = "vote_average"
-        case voteCount = "vote_count"
+    override static func primaryKey() -> String? {
+        return "id"
     }
     
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        airDate <- map["air_date"]
+        episodeNumber <- (map["episode_number"], RealmOptionalTransform())
+        id <- map["id"]
+        name <- map["name"]
+        overview <- map["overview"]
+        productionCode <- map["production_code"]
+        seasonNumber <- (map["season_number"], RealmOptionalTransform())
+        showId <- (map["show_id"], RealmOptionalTransform())
+        stillPath <- map["still_path"]
+        voteAverage <- (map["vote_average"], RealmOptionalTransform())
+        voteCount <- (map["vote_count"], RealmOptionalTransform())
+        
+    }
+
 }

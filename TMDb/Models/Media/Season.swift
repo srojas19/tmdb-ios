@@ -7,23 +7,35 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
+import ObjectMapperAdditions
 
-struct Season: Decodable {
-    let airDate: String?
-    let episodeCount: Int?
-    let id: Int?
-    let name: String?
-    let overview: String?
-    let posterPath: String?
-    let seasonNumber: Int?
+@objcMembers
+class Season: Object, Mappable {
+    dynamic var airDate: String? = nil
+    var episodeCount = RealmOptional<Int>()
+    dynamic var id = 0
+    dynamic var name: String? = nil
+    dynamic var overview: String? = nil
+    dynamic var posterPath: String? = nil
+    var seasonNumber = RealmOptional<Int>()
     
-    enum CodingKeys: String, CodingKey {
-        case airDate = "air_date"
-        case episodeCount = "episode_count"
-        case id
-        case name
-        case overview
-        case posterPath = "poster_path"
-        case seasonNumber = "season_number"
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        airDate <- map["air_date"]
+        episodeCount <- (map["episode_count"], RealmOptionalTransform())
+        id <- map["id"]
+        name <- map["name"]
+        overview <- map["overview"]
+        posterPath <- map["poster_path"]
+        seasonNumber <- (map["season_number"], RealmOptionalTransform())
     }
 }
