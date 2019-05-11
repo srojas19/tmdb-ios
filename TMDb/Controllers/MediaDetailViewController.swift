@@ -15,10 +15,6 @@ class MediaDetailViewController: UIViewController {
     let activityView = UIActivityIndicatorView(style: .white)
     let fadeView = UIView()
     
-    var mediaType: TMDbMediaType!
-    var mediaData: MediaListResult!
-    var media: Media!
-    
     var viewModel = MediaDetailViewModel()
     let bag = DisposeBag()
     
@@ -29,11 +25,9 @@ class MediaDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.mediaType = mediaType
-        viewModel.mediaData = mediaData
-        
         viewModel.media.filter{$0 != nil}.subscribe(onNext: { (media) in
-            guard let view = self.view as? MediaDetailView, let media = media
+            guard let view = self.view as? MediaDetailView,
+                let media = media
                 else { return }
             view.mediaImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")"), placeholder: UIImage(named: "Media Placeholder"))
             view.backdropImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/original\(media.backdropPath ?? "")"))
@@ -103,7 +97,7 @@ class MediaDetailViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationItem.title = mediaData.title ?? mediaData.name
+        navigationItem.title = viewModel.mediaData.title ?? viewModel.mediaData.name
     }
     
     @IBAction func expandDescription(_ sender: UIButton) {

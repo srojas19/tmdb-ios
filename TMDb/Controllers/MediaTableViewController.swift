@@ -126,8 +126,8 @@ class MediaTableViewController: UIViewController {
             let page = (indexPath.row / 20) + 1
             let item = indexPath.row % 20
             
-            mediaDetailViewController.mediaData = isSearching ? searchResults[indexPath.row] : media[page]?[item]
-            mediaDetailViewController.mediaType = mediaType
+            mediaDetailViewController.viewModel.mediaData = isSearching ? searchResults[indexPath.row] : media[page]?[item]
+            mediaDetailViewController.viewModel.mediaType = mediaType
             
         default:
             fatalError("Unidentified Segue")
