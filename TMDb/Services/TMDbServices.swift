@@ -61,7 +61,6 @@ class TMDbServices {
             }
             return
         }
-        
         session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
             guard let response = response as? HTTPURLResponse,
                 (200...299).contains(response.statusCode),
@@ -95,6 +94,7 @@ class TMDbServices {
         let urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/\(id)"))
         let parameters = ["append_to_response": "videos", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
         let encodedURLRequest = urlRequest.encode(with: parameters)
+        
         guard Reachability()!.connection != .none else {
             switch mediaType {
             case .movie:
@@ -143,58 +143,4 @@ class TMDbServices {
         }).resume()
         
     }
-
-    
-    /*
-    func getMediaDetail(mediaType: TMDbMediaType, id: Int, completion: @escaping (Result<Media, DataResponseError>) -> Void) {
-        
-        let urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/\(id)"))
-        let parameters = ["append_to_response": "videos", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
-        let encodedURLRequest = urlRequest.encode(with: parameters)
-        guard Reachability()!.connection != .none else {
-            if let response = URLCache.shared.cachedResponse(for: encodedURLRequest) {
-                if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: response.data) {
-                    completion(.success(decodedResponse))
-                } else if mediaType == .tvShow, let decodedResponse = try? JSONDecoder().decode(TVShow.self, from: response.data) {
-                    completion(.success(decodedResponse))
-                } else {
-                    completion(.failure(.decoding))
-                }
-            } else {
-                completion(.failure(.network))
-            }
-            return
-        }
-        session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
-            guard let response = response as? HTTPURLResponse,
-                (200...299).contains(response.statusCode),
-                let data = data else {
-                    completion(.failure(.network))
-                    return
-            }
-            
-            /*
-             do {
-             let decodedResponse = try JSONDecoder().decode(TVShow.self, from: data)
-             }
-             catch {
-             print("\(error)")
-             }
-             */
-            
-            if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: data) {
-                URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: encodedURLRequest)
-                completion(.success(decodedResponse))
-            } else if mediaType == .tvShow, let decodedResponse = try? JSONDecoder().decode(TVShow.self, from: data) {
-                URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: encodedURLRequest)
-                completion(.success(decodedResponse))
-            } else {
-                completion(.failure(.decoding))
-            }
-            
-        }).resume()
-        
-    }
-    */
-    
 }
