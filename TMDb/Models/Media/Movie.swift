@@ -7,121 +7,76 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
+import ObjectMapperAdditions
 
-struct Movie: Media {
-    var genres: [Genre]?
-    var originalLanguage: String?
-    var popularity: Double?
-    var productionCompanies: [ProductionCompany]?
-    var status: String?
-    var backdropPath: String?
-    var homepage: String?
-    var id: Int
-    var overview: String?
-    var posterPath: String?
-    var voteAverage: Double
-    var voteCount: Int
+@objcMembers
+class Movie: Object, Media, Mappable {
     
-    let adult: Bool
-    let belongsToCollection: TMDBCollection?
-    let budget: Int?
-    let imdbId: String?
-    let originalTitle: String?
-    let productionCountries: [ProductionCountry]?
-    let releaseDate: String?
-    let revenue: Int?
-    let runtime: Int?
-    let spokenLanguages: [SpokenLanguage]
-    let tagline: String?
-    let title: String
-    let video: Bool
+    dynamic var genres = List<Genre>()
+    dynamic var originalLanguage: String? = nil
+    var popularity = RealmOptional<Double>()
+    var productionCompanies = List<ProductionCompany>()
+    dynamic var status: String? = nil
+    dynamic var backdropPath: String? = nil
+    dynamic var homepage: String? = nil
+    dynamic var id = 0
+    dynamic var overview: String? = nil
+    dynamic var posterPath: String? = nil
+    dynamic var voteAverage: Double = 0.0
+    dynamic var voteCount = 0
+
+    dynamic var adult = false
+    var belongsToCollection: TMDBCollection?
+    var budget = RealmOptional<Int>()
+    dynamic var imdbId: String? = nil
+    dynamic var originalTitle: String? = nil
+    var productionCountries = List<ProductionCountry>()
+    dynamic var releaseDate: String? = nil
+    var revenue = RealmOptional<Int>()
+    var runtime = RealmOptional<Int>()
+    var spokenLanguages =  List<SpokenLanguage>()
+    dynamic var tagline: String? = nil
+    dynamic var title = ""
+    dynamic var video = false
     
-    enum CodingKeys: String, CodingKey {
-        case backdropPath = "backdrop_path"
-        case genres
-        case homepage
-        case id
-        case originalLanguage = "original_language"
-        case overview
-        case popularity
-        case posterPath = "poster_path"
-        case productionCompanies = "production_companies"
-        case status
-        case voteAverage = "vote_average"
-        case voteCount = "vote_count"
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        genres <- (map["genres"], ListTransform<Genre>())
+        originalLanguage <- map["original_language"]
+        popularity <- (map["popularity"], RealmOptionalTransform())
+        productionCompanies <- (map["production_companies"], ListTransform<ProductionCompany>())
+        status <- map["status"]
+        backdropPath <- map["backdrop_path"]
+        homepage <- map["homepage"]
+        id <- map["id"]
+        overview <- map["overview"]
+        posterPath <- map["poster_path"]
+        voteAverage <- map["vote_average"]
+        voteCount <- map["vote_count"]
         
-        case adult
-        case belongsToCollection = "belongs_to_collection"
-        case budget
-        case imdbId = "imdb_id"
-        case originalTitle = "original_title"
-        case productionCountries = "production_countries"
-        case releaseDate = "release_date"
-        case revenue
-        case runtime
-        case spokenLanguages = "spoken_languages"
-        case tagline
-        case title
-        case video
+        adult <- map["adult"]
+        belongsToCollection <- map["belongs_to_collection"]
+        budget <- (map["budget"], RealmOptionalTransform())
+        imdbId <- map["imdb_id"]
+        originalTitle <- map["original_title"]
+        productionCountries <- (map["production_countries"], ListTransform<ProductionCountry>())
+        releaseDate <- map["release_date"]
+        revenue <- (map["revenue"], RealmOptionalTransform())
+        runtime <- (map["runtime"], RealmOptionalTransform())
+        spokenLanguages <- (map["spoken_languages"], ListTransform<SpokenLanguage>())
+        tagline <- map["tagline"]
+        title <- map["title"]
+        video <- map["video"]
+
+        
     }
 }
-
-/*
-struct Movie: Media {
-    let genres = List<Genre>()
-    @objc dynamic var originalLanguage: String? = nil
-    @objc dynamic var popularity: Double = 0.0
-    let productionCompanies: List<ProductionCompany>()
-    @objc dynamic var status: String? = nil
-    @objc dynamic var backdropPath: String? = nil
-    @objc dynamic var homepage: String? = nil
-    @objc dynamic var id = 0
-    var overview: String?
-    var posterPath: String?
-    var voteAverage: Double
-    var voteCount: Int
-    
-    let adult: Bool
-    let belongsToCollection: TMDBCollection?
-    let budget: Int?
-    let imdbId: String?
-    let originalTitle: String?
-    let productionCountries: [ProductionCountry]?
-    let releaseDate: String?
-    let revenue: Int?
-    let runtime: Int?
-    let spokenLanguages: [SpokenLanguage]
-    let tagline: String?
-    let title: String
-    let video: Bool
-    
-    enum CodingKeys: String, CodingKey {
-        case backdropPath = "backdrop_path"
-        case genres
-        case homepage
-        case id
-        case originalLanguage = "original_language"
-        case overview
-        case popularity
-        case posterPath = "poster_path"
-        case productionCompanies = "production_companies"
-        case status
-        case voteAverage = "vote_average"
-        case voteCount = "vote_count"
-        
-        case adult
-        case belongsToCollection = "belongs_to_collection"
-        case budget
-        case imdbId = "imdb_id"
-        case originalTitle = "original_title"
-        case productionCountries = "production_countries"
-        case releaseDate = "release_date"
-        case revenue
-        case runtime
-        case spokenLanguages = "spoken_languages"
-        case tagline
-        case title
-        case video
-    }
-}
-*/

@@ -8,42 +8,21 @@
 
 import Foundation
 import RealmSwift
+import ObjectMapper
 
 
-protocol Media: Decodable {
-
-    var backdropPath: String? { get }
-    var genres: [Genre]?  { get }
-    var homepage: String? { get }
-    var id: Int { get }
-    var originalLanguage: String? { get }
-    var overview: String? { get }
-    var popularity: Double? { get }
-    var posterPath: String? { get }
-    var productionCompanies: [ProductionCompany]?  { get }
-    var status: String? { get }
-    var voteAverage: Double { get }
-    var voteCount: Int { get }
-
-}
-
-/*
-protocol Media: Object, EVReflectable {
+protocol Media {
     
-    var backdropPath: String? { get }
-    var genres: List<Genre>  { get }
-    var homepage: String? { get }
-    var id: Int { get }
-    var originalLanguage: String? { get }
-    var overview: String? { get }
-    var popularity: Double { get }
-    var posterPath: String? { get }
-    var productionCompanies: List<ProductionCompany>  { get }
-    var status: String? { get }
-    var voteAverage: Double { get }
-    var voteCount: Int { get }
-    
+    dynamic var genres: List<Genre> { get }
+    dynamic var originalLanguage: String? { get }
+    var popularity: RealmOptional<Double> { get }
+    var productionCompanies: List<ProductionCompany> { get }
+    dynamic var status: String? { get }
+    dynamic var backdropPath: String? { get }
+    dynamic var homepage: String? { get }
+    dynamic var id: Int { get }
+    dynamic var overview: String? { get }
+    dynamic var posterPath: String? { get }
+    dynamic var voteAverage: Double { get }
+    dynamic var voteCount: Int { get }
 }
-*/
-
-

@@ -7,12 +7,26 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
 
-struct SpokenLanguage: Decodable {
-    let iso: String
-    let name: String
+@objcMembers
+class SpokenLanguage: Object, Mappable {
+    dynamic var iso = ""
+    dynamic var name = ""
     
-    enum CodingKeys: String, CodingKey {
-        case name, iso = "iso_639_1"
+    override static func primaryKey() -> String? {
+        return "iso"
     }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        name <- map["name"]
+        iso <- map["iso"]
+        
+    }
+    
 }

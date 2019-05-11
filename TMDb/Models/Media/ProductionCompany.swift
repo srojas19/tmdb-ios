@@ -7,15 +7,30 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
 
-struct ProductionCompany: Decodable {
-    let name: String
-    let id: Int
-    let logoPath: String?
-    let originCountry: String?
+@objcMembers
+class ProductionCompany: Object, Mappable {
+    dynamic var name = ""
+    dynamic var id = 0
+    dynamic var logoPath: String? = nil
+    dynamic var originCountry: String? = nil
     
-    enum CodingKeys: String, CodingKey {
-        case name, id, logoPath = "logo_path", originCountry = "origin_country"
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+        logoPath <- map["logo_path"]
+        originCountry <- map["origin_country"]
+        
     }
 
 }

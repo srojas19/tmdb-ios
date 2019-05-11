@@ -33,7 +33,8 @@ class MediaDetailViewController: UIViewController {
                 view.mediaImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/w500\(self.media.posterPath ?? "")"), placeholder: UIImage(named: "Media Placeholder"))
                 view.backdropImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/original\(self.media.backdropPath ?? "")"))
                 self.descriptionLabel.text = self.media.overview
-                if let genres = self.media.genres, !genres.isEmpty {
+                let genres = self.media.genres
+                if !genres.isEmpty {
                     var genreString = ""
                     genres.forEach { genreString += "\($0.name), "}
                     genreString.removeLast()
@@ -42,20 +43,22 @@ class MediaDetailViewController: UIViewController {
                 }
                 else { view.genresLabel.text = nil }
                 
-                if let productionCompanies = self.media.productionCompanies, !productionCompanies.isEmpty {
+                
+                let productionCompanies = self.media.productionCompanies
+                if !productionCompanies.isEmpty {
                     view.productionCompaniesLabel.text = productionCompanies[0].name
                 } else {
                     view.productionCompaniesLabel.text = nil
                 }
                 view.averageScoreLabel.text = "\( self.media.voteAverage) ★"
                 view.voteCountLabel.text = "\(self.media.voteCount) " + "Votes".localizedString
-                view.popularityLabel.text = String(format:"%.1f",self.media.popularity ?? "No data".localizedString)
+                view.popularityLabel.text = String(format:"%.1f",self.media.popularity.value ?? "No data".localizedString)
                 if self.mediaType == .movie, let media = self.media as? Movie {
                     view.dateLabel.text = String(media.releaseDate?.split(separator: "-")[0] ?? "")
                     if !media.spokenLanguages.isEmpty {
                         view.originalLanguageLabel.text = media.spokenLanguages[0].name
                     }
-                    view.runtimeLabel.text = "\(media.runtime ?? 0) min"
+                    view.runtimeLabel.text = "\(media.runtime.value ?? 0) min"
                     view.seasonsSection.isHidden = true
                     view.episodesSection.isHidden = true
                 } else if self.mediaType == .tvShow, let media = self.media as? TVShow {
@@ -65,8 +68,8 @@ class MediaDetailViewController: UIViewController {
                         view.runtimeLabel.text = "\(media.episodeRunTime[0]) min"
                     } else {view.runtimeLabel.text = "?"}
                     
-                    view.seasonsLabel.text = "\(media.numberOfSeasons ?? 0)"
-                    view.episodesLabel.text = "\(media.numberOfEpisodes ?? 0)"
+                    view.seasonsLabel.text = "\(media.numberOfSeasons.value ?? 0)"
+                    view.episodesLabel.text = "\(media.numberOfEpisodes.value ?? 0)"
                 }
                 
                 UIView.animate(withDuration: 1, delay: 1, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {

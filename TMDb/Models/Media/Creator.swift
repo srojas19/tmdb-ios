@@ -7,21 +7,33 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
+import ObjectMapperAdditions
 
-struct Creator: Decodable {
+@objcMembers
+class Creator: Object, Mappable {
 
-    let id: Int
-    let creditId: String?
-    let name: String?
-    let gender: Int?
-    let profilePath: String?
+    dynamic var id = 0
+    dynamic var creditId: String? = nil
+    dynamic var name: String? = nil
+    var gender = RealmOptional<Int>()
+    dynamic var profilePath: String? = nil
     
-    enum CodingKeys: String, CodingKey {
-        case id
-        case creditId = "credit_id"
-        case name
-        case gender
-        case profilePath = "profile_path"
+    override static func primaryKey() -> String? {
+        return "id"
     }
     
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        creditId <- map["credit_id"]
+        name <- map["name"]
+        gender <- (map["gender"], RealmOptionalTransform())
+        profilePath <- map["profile_path"]
+    }
+
 }

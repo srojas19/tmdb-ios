@@ -7,8 +7,27 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
 
-struct Genre: Decodable {
-    let id: Int
-    let name: String
+
+@objcMembers
+class Genre: Object, Mappable {
+    dynamic var id = 0
+    dynamic var name = ""
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+        
+    }
+
 }
