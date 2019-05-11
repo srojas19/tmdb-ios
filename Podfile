@@ -9,6 +9,7 @@ target 'TMDb' do
   pod 'RealmSwift'
   pod 'ObjectMapper', '~> 3.4'
   pod 'ObjectMapperAdditions/Realm', '~> 6.0'
+  pod 'Kingfisher' ### , '~> 5.0'
 
   target 'TMDbTests' do
     inherit! :search_paths

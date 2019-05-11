@@ -17,12 +17,11 @@ class TMDbServices {
     
     private let apiKey: String
     private let session: URLSession
-    private let reachability = Reachability()!
     
     private lazy var baseURL: URL = {
         return URL(string: "https://api.themoviedb.org/3/")!
     }()
-
+    
     
     private init() {
         if let path = Bundle.main.path(forResource: "TMDbService-info", ofType: "plist"),
@@ -53,7 +52,7 @@ class TMDbServices {
         let parameters = ["page": "\(page)", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
         let encodedURLRequest = urlRequest.encode(with: parameters)
         
-        guard reachability.connection != .none else {
+        guard Reachability()!.connection != .none else {
             let response = realm.objects(PagedMediaResponse.self).filter("page = \(page) AND mediaType = '\(mediaType.rawValue)' AND category = \(category.rawValue)")
             if let response = response.first {
                 completion(.success(response))
@@ -76,12 +75,6 @@ class TMDbServices {
                 return
             }
             
-            for media in decodedResponse.results {
-                print(media.title)
-                print(media.video)
-                print(Array(media.genreIds))
-            }
-            
             decodedResponse.category = category.rawValue
             decodedResponse.mediaType = mediaType.rawValue
             decodedResponse.id = "\(decodedResponse.page)\(decodedResponse.mediaType)\(decodedResponse.category)"
@@ -97,67 +90,12 @@ class TMDbServices {
     }
     
     
-
-/*
-    func fetch(mediaType: TMDbMediaType, category: TMDbCategory, page: Int,
-                     completion: @escaping (Result<PagedMediaResponse, DataResponseError>) -> Void) {
-        let urlRequest: URLRequest;
-        switch (mediaType, category) {
-        case (_, .popular):
-            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/popular"))
-        case (_, .topRated):
-            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/top_rated"))
-        case (.movie, .upcoming):
-            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/upcoming"))
-        case (.tvShow, .upcoming):
-            urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/airing_today"))
-        }
-        
-        let parameters = ["page": "\(page)", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
-        let encodedURLRequest = urlRequest.encode(with: parameters)
-        guard reachability.connection != .none else {
-            if let response = URLCache.shared.cachedResponse(for: encodedURLRequest), let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: response.data){
-                completion(.success(decodedResponse))
-            } else {
-                completion(.failure(.network))
-            }
-            return
-        }
-
-        
-        session.dataTask(with: encodedURLRequest, completionHandler: { data, response, error in
-            guard let response = response as? HTTPURLResponse,
-                (200...299).contains(response.statusCode),
-                let data = data else {
-                    completion(.failure(.network))
-                    return
-            }
-            
-            /*
-            do {
-                let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary
-                print(json)
-            }
-            catch { print(error) }
-            */
-            
-            guard let decodedResponse = try? JSONDecoder().decode(PagedMediaResponse.self, from: data) else {
-                URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: encodedURLRequest)
-                completion(.failure(.decoding))
-                return
-            }
-            
-            completion(.success(decodedResponse))
-        }).resume()
-    }
-*/
-    
     func getMediaDetail(mediaType: TMDbMediaType, id: Int, completion: @escaping (Result<Media, DataResponseError>) -> Void) {
         
         let urlRequest = URLRequest(url: baseURL.appendingPathComponent("\(mediaType.rawValue)/\(id)"))
         let parameters = ["append_to_response": "videos", "api_key": "\(apiKey)", "language": Locale.current.languageCode!]
         let encodedURLRequest = urlRequest.encode(with: parameters)
-        guard reachability.connection != .none else {
+        guard Reachability()!.connection != .none else {
             if let response = URLCache.shared.cachedResponse(for: encodedURLRequest) {
                 if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: response.data) {
                     completion(.success(decodedResponse))
@@ -180,13 +118,13 @@ class TMDbServices {
             }
             
             /*
-            do {
-                let decodedResponse = try JSONDecoder().decode(TVShow.self, from: data)
-            }
-            catch {
-                print("\(error)")
-            }
-            */
+             do {
+             let decodedResponse = try JSONDecoder().decode(TVShow.self, from: data)
+             }
+             catch {
+             print("\(error)")
+             }
+             */
             
             if mediaType == .movie, let decodedResponse = try? JSONDecoder().decode(Movie.self, from: data) {
                 URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: encodedURLRequest)
@@ -199,7 +137,7 @@ class TMDbServices {
             }
             
         }).resume()
-
+        
     }
     
 }

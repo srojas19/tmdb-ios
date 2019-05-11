@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class MediaTableViewController: UIViewController {
     
@@ -157,10 +158,10 @@ extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, 
         if isSearching {
             let media = searchResults[indexPath.row]
             cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
-            cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")", placeholder: UIImage(named: "Media Placeholder"))
+            cell.mediaImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")"),placeholder: UIImage(named: "Media Placeholder"))
         } else if let media = media[page]?[item] {
             cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
-            cell.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")", placeholder: UIImage(named: "Media Placeholder"))
+            cell.mediaImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")"), placeholder: UIImage(named: "Media Placeholder"))
         } else {
             cell.loading()
             
