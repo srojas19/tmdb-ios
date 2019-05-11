@@ -25,6 +25,7 @@ Open `TMDb.xcworkspace`, build the project and run.
 - Shows Movies and TV Shows in 3 different categories: Popular, Top Rated and Upcoming.
 - Detailed View of Movies and TV Shows.
 - Allows the search of Movies and TV Shows by category.
+- Stores the results of lists and detailed media in a Realm database, that is accessed whenever the device is offline.
 
 ## Application Layers
 
