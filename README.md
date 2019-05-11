@@ -1,7 +1,24 @@
 # TMDb Catalogue for iOS
-By Santiago Rojas Herrera
+**By Santiago Rojas Herrera**
 
 Showcase iOS app of some API services offered by The Movie Database.
+
+## Building Instructions
+Open in Xcode or clone the project
+
+````
+git clone https://github.com/srojas19/tmdb-ios.git
+cd tmdb-ios
+````
+Install cocoa pods
+```
+pod install
+```
+Open `TMDb.xcworkspace`, build the project and run.
+
+**Note:** Project is set-up with Swift 5 and Xcode 10.2.1, thus, you need an up-to-date Xcode to test the project
+
+
 
 ## Features
 - Consumes the Movies and TV Shows APIs of [TMDb](https://developers.themoviedb.org/3/).
