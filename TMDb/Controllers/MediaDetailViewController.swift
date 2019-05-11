@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class MediaDetailViewController: UIViewController {
     
@@ -29,8 +30,8 @@ class MediaDetailViewController: UIViewController {
                 guard let view = self.view as? MediaDetailView else {
                     return
                 }
-                view.mediaImage.imageFrom(urlString: "https://image.tmdb.org/t/p/w500\(self.media.posterPath ?? "")", placeholder: UIImage(named: "Media Placeholder"))
-                view.backdropImage.imageFrom(urlString: "https://image.tmdb.org/t/p/original\(self.media.backdropPath ?? "")", placeholder: UIImage(named: "Media Placeholder"))
+                view.mediaImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/w500\(self.media.posterPath ?? "")"), placeholder: UIImage(named: "Media Placeholder"))
+                view.backdropImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/original\(self.media.backdropPath ?? "")"))
                 self.descriptionLabel.text = self.media.overview
                 if let genres = self.media.genres, !genres.isEmpty {
                     var genreString = ""
@@ -90,6 +91,7 @@ class MediaDetailViewController: UIViewController {
             view.addSubview(activityView)
             activityView.hidesWhenStopped = true
             activityView.center = view.center
+            activityView.color = UIColor(named: "Main")
             activityView.startAnimating()
         }
     }

@@ -7,52 +7,63 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
+import ObjectMapperAdditions
 
-struct MediaListResult: Decodable {
+@objcMembers
+class MediaListResult: Object, Mappable {
     
-    let posterPath: String?
-    let overview: String
-    let genreIds: [Int]
-    let id: Int
-    let backdropPath: String?
-    let popularity: Double
-    let voteCount: Int
-    let voteAverage: Double
-    let originalLanguage: String?
+    dynamic var posterPath: String? = nil
+    dynamic var overview: String = ""
+    dynamic var genreIds = List<Int>()
+    dynamic var id = 0
+    dynamic var backdropPath: String? = nil
+    dynamic var popularity: Double = 0.0
+    dynamic var voteCount = 0
+    dynamic var voteAverage: Double = 0.0
+    dynamic var originalLanguage: String? = nil
     
-    let title: String?
-    let video: Bool?
-    let adult: Bool?
-    let releaseDate: String?
-    let originalTitle: String?
-
+    dynamic var title: String? = nil
+    dynamic var video = false
+    dynamic var adult = false
+    dynamic var releaseDate: String? = nil
+    dynamic var originalTitle: String? = nil
     
-    let firstAirDate: String?
-    let originCountry: [String]?
-    let name: String?
-    let originalName: String?
-
+    dynamic var firstAirDate: String? = nil
+    dynamic var originCountry = List<String>()
+    dynamic var name: String? = nil
+    dynamic var originalName: String? = nil
     
-    enum CodingKeys: String, CodingKey {
-        case posterPath = "poster_path"
-        case adult = "adult"
-        case overview = "overview"
-        case releaseDate = "release_date"
-        case genreIds = "genre_ids"
-        case id = "id"
-        case originalTitle = "original_title"
-        case originalLanguage = "original_language"
-        case title = "title"
-        case backdropPath = "backdrop_path"
-        case popularity = "popularity"
-        case voteCount = "vote_count"
-        case video = "video"
-        case voteAverage = "vote_average"
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        posterPath <- map["poster_path"]
+        adult <- map["adult"]
+        overview <- map["overview"]
+        releaseDate <- map["release_date"]
+        genreIds <- (map["genre_ids"], RealmTransform())
+        id <- map["id"]
+        originalTitle <- map["original_title"]
+        originalLanguage <- map["original_language"]
+        title <- map["title"]
+        backdropPath <- map["backdrop_path"]
+        popularity <- map["popularity"]
+        voteCount <- map["vote_count"]
+        video <- map["video"]
+        voteAverage <- map["vote_average"]
         
-        case firstAirDate = "first_air_date"
-        case originCountry = "origin_country"
-        case name = "name"
-        case originalName = "original_name"
+        firstAirDate <- map["first_air_date"]
+        originCountry <- (map["origin_country"], RealmTransform())
+        name <- map["name"]
+        originalName <- map["original_name"]
+
     }
 
 }

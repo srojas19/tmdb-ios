@@ -7,19 +7,35 @@
 //
 
 import Foundation
+import RealmSwift
+import ObjectMapper
 
-struct PagedMediaResponse: Decodable {
-    let results: [MediaListResult]
-    let dates: [String: String]?
-    let totalPages: Int
-    let totalResults: Int
-    let page: Int
+@objcMembers
+class PagedMediaResponse: Object, Mappable {
     
-    enum CodingKeys: String, CodingKey {
-        case results = "results"
-        case dates = "dates"
-        case totalPages = "total_pages"
-        case totalResults = "total_results"
-        case page = "page"
+    dynamic var results =  List<MediaListResult>()
+//    let dates: [String: String]?
+    dynamic var totalPages = 0
+    dynamic var totalResults = 0
+    dynamic var page = 0
+    dynamic var mediaType: String = ""
+    dynamic var category = 0
+    dynamic var id: String = ""
+    
+    override static func primaryKey() -> String? {
+        return "id"
     }
+    
+    required convenience init?(map: Map) {
+        self.init()
+    }
+    
+    func mapping(map: Map) {
+        results <- (map["results"], ListTransform<MediaListResult>())
+//        dates <- map["dates"]
+        totalPages <- map["total_pages"]
+        totalResults <- map["total_results"]
+        page <- map["page"]
+    }
+    
 }
