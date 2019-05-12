@@ -32,7 +32,7 @@ class MoviesViewController: UIViewController {
         switch segue.identifier ?? "" {
         case "Media Table":
             guard let mediaTableViewController = segue.destination as? MediaTableViewController else { fatalError("Unexpected View Controller") }
-            mediaTableViewController.mediaType = .movie
+            mediaTableViewController.viewModel.mediaType = .movie
             addChild(mediaTableViewController)
             
         default:
