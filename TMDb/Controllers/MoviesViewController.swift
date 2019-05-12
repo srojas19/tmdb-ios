@@ -31,8 +31,9 @@ class MoviesViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         switch segue.identifier ?? "" {
         case "Media Table":
-            guard let mediaTableViewController = segue.destination as? MediaTableViewController else { fatalError("Unexpected View Controller") }
-            mediaTableViewController.mediaType = .movie
+            guard let mediaTableViewController = segue.destination as? MediaTableViewController
+                else { fatalError("Unexpected View Controller") }
+            mediaTableViewController.viewModel.mediaType = .movie
             addChild(mediaTableViewController)
             
         default:
