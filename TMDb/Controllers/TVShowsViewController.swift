@@ -27,8 +27,9 @@ class TVShowsViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         switch segue.identifier ?? "" {
         case "Media Table":
-            guard let mediaTableViewController = segue.destination as? MediaTableViewController else { fatalError("Unexpected View Controller") }
-            mediaTableViewController.mediaType = .tvShow
+            guard let mediaTableViewController = segue.destination as? MediaTableViewController
+                else { fatalError("Unexpected View Controller") }
+            mediaTableViewController.viewModel.mediaType = .tvShow
             addChild(mediaTableViewController)
         default:
             fatalError("Unidentified Segue")
