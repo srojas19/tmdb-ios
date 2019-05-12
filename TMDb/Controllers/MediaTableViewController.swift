@@ -8,6 +8,8 @@
 
 import UIKit
 import Kingfisher
+import RxSwift
+import RxCocoa
 
 class MediaTableViewController: UIViewController {
     
@@ -16,9 +18,7 @@ class MediaTableViewController: UIViewController {
     @IBOutlet weak var categoriesSegmentedControl: UISegmentedControl!
     
     var viewModel = MediaTableViewModel()
-        
-    var searchResults = [MediaListResult]()
-    var isSearching = false
+    var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,18 +34,40 @@ class MediaTableViewController: UIViewController {
         tableView.tableFooterView = UIView()
         tableView.contentInset.top += toolbar.bounds.height
         tableView.scrollIndicatorInsets.top += toolbar.bounds.height
-        toolbar.delegate = self
-        
         
         // SearchBar configuration
         parent?.definesPresentationContext = true
         parent?.navigationItem.searchController = UISearchController(searchResultsController: nil)
         parent?.navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
-        parent?.navigationItem.searchController?.delegate = self
         if let searchBar = parent?.navigationItem.searchController?.searchBar {
             searchBar.placeholder = parent is MoviesViewController ? "Filter movies".localizedString : "Filter TV shows".localizedString
+            searchBar.tintColor = UIColor(named: "Main")
+            searchBar.barStyle = .black
             searchBar.delegate = self
+            searchBar.rx.text.bind(to: viewModel.searchText).disposed(by: disposeBag)
         }
+        
+        viewModel.searchText
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .filter{ $0 != nil && $0!.count > 0 }
+            .distinctUntilChanged()
+            .subscribe(onNext: {
+                self.categoriesSegmentedControl.isEnabled = false
+                self.viewModel.isSearching = true
+                self.viewModel.search(contains: $0!)
+                self.tableView.reloadData()
+                if !self.viewModel.searchResults.isEmpty {
+                    self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                }
+            }).disposed(by: disposeBag)
+        
+        viewModel.searchText
+            .filter{ $0 == "" }
+            .observeOn(MainScheduler.instance)
+            .subscribe({_ in 
+                self.viewModel.searchResults = []
+                self.tableView.reloadData()
+            }).disposed(by: disposeBag)
         
         viewModel.fetch(page: 1)
     }
@@ -61,8 +83,6 @@ class MediaTableViewController: UIViewController {
     @IBAction func changeCategory(_ sender: UISegmentedControl) {
         viewModel.category = TMDbCategory(rawValue: sender.selectedSegmentIndex)!
         viewModel.media.removeAll()
-        viewModel.totalPages = 0
-        viewModel.totalCount = 0
         viewModel.fetch(page: 1)
         if viewModel.totalCount > 0 {
             tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: false)
@@ -84,7 +104,7 @@ class MediaTableViewController: UIViewController {
             let page = (indexPath.row / 20) + 1
             let item = indexPath.row % 20
             
-            mediaDetailViewController.viewModel.mediaData = isSearching ? searchResults[indexPath.row] : viewModel.media[page]?[item]
+            mediaDetailViewController.viewModel.mediaData = viewModel.isSearching ? viewModel.searchResults[indexPath.row] : viewModel.media[page]?[item]
             mediaDetailViewController.viewModel.mediaType = viewModel.mediaType
             
         default:
@@ -96,16 +116,10 @@ class MediaTableViewController: UIViewController {
     
 }
 
-extension MediaTableViewController: UIToolbarDelegate {
-    func position(for bar: UIBarPositioning) -> UIBarPosition {
-        return UIBarPosition.topAttached
-    }
-}
-
 extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, UITableViewDataSourcePrefetching {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isSearching { return searchResults.count }
+        if viewModel.isSearching { return viewModel.searchResults.count }
         else { return viewModel.totalCount }
     }
     
@@ -113,23 +127,16 @@ extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, 
         let cell = tableView.dequeueReusableCell(withIdentifier: MediaCell.reusableIdentifier) as! MediaCell
         let page = (indexPath.row / 20) + 1
         let item = indexPath.row % 20
-        if isSearching {
-            let media = searchResults[indexPath.row]
+        if let media = viewModel.isSearching ? viewModel.searchResults[indexPath.row]: viewModel.media[page]?[item] {
             cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
             cell.mediaImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")"),placeholder: UIImage(named: "Media Placeholder"))
-        } else if let media = viewModel.media[page]?[item] {
-            cell.configure(title: media.title ?? media.name ?? "" , score: media.voteAverage, overview: media.overview)
-            cell.mediaImage.kf.setImage(with: URL(string: "https://image.tmdb.org/t/p/w500\(media.posterPath ?? "")"), placeholder: UIImage(named: "Media Placeholder"))
-        } else {
-            cell.loading()
-            
-        }
+        } else { cell.loading() }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        if !isSearching, indexPaths.contains(where: { (indexPath) -> Bool in
+        if !viewModel.isSearching, indexPaths.contains(where: { (indexPath) -> Bool in
             let page = (indexPath.row / 20) + 1
             let item = indexPath.row % 20
             return self.viewModel.media[page]?[item] == nil
@@ -142,12 +149,7 @@ extension MediaTableViewController: UITableViewDataSource, UITableViewDelegate, 
 }
 
 extension MediaTableViewController: MediaTableViewModelDelegate {
-    func onFetchCompleted() {
-        tableView.reloadData()
-//        if  viewModel.totalCount > 0 {
-//            tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: false)
-//        }
-    }
+    func onFetchCompleted() { tableView.reloadData() }
     
     func onFetchFailed(with reason: String) {
         let title = "Warning".localizedString
@@ -159,29 +161,12 @@ extension MediaTableViewController: MediaTableViewModelDelegate {
     
 }
 
-extension MediaTableViewController: UISearchControllerDelegate, UISearchBarDelegate {
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        isSearching = true
-        categoriesSegmentedControl.isEnabled = false
-        tableView.reloadData()
-    }
-    
+extension MediaTableViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        isSearching = false
+        viewModel.isSearching = false
         categoriesSegmentedControl.isEnabled = true
-        searchResults.removeAll(keepingCapacity: false)
+        viewModel.searchResults.removeAll(keepingCapacity: false)
         tableView.reloadData()
-    }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        if let text = searchBar.text, !text.isEmpty {
-            searchResults.removeAll(keepingCapacity: true)
-            for (_, page) in viewModel.media {
-                searchResults += page.filter { $0.name?.range(of: text, options: .caseInsensitive) != nil || $0.title?.range(of: text, options: .caseInsensitive) != nil}
-            }
-            tableView.reloadData()
-        }
-        
+        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
 }

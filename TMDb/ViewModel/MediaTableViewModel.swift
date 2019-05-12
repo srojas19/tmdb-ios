@@ -18,6 +18,8 @@ protocol MediaTableViewModelDelegate: class {
 final class MediaTableViewModel {
     weak var delegate: MediaTableViewModelDelegate?
     
+    var searchText = PublishSubject<String?>()
+    
     var mediaType: TMDbMediaType!
     var category = TMDbCategory.popular
     
@@ -57,6 +59,16 @@ final class MediaTableViewModel {
                 }
             }
         }
+    }
+    
+    func search(contains text: String) {
+        searchResults.removeAll(keepingCapacity: true)
+        for (_, page) in media {
+            searchResults += page.filter {
+                $0.name?.range(of: text, options: .caseInsensitive) != nil || $0.title?.range(of: text, options: .caseInsensitive) != nil
+            }
+        }
+
     }
 
     
